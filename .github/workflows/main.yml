@@ -1,30 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@Katrin-Sam 
-evencatt
-/
-infra_actions
-Public
-forked from Turonk/infra_actions
-Code
-Pull requests
-Actions
-Projects
-Security
-Insights
-infra_actions/.github/workflows/main.yml
-@evencatt
-evencatt fixed syntax
-Latest commit 089d1df on 7 Aug
- History
- 1 contributor
-81 lines (73 sloc)  2.63 KB
-
 name: Django-app workflow
 
 on: [push]
@@ -74,7 +47,7 @@ jobs:
         uses: docker/build-push-action@v2 
         with:
           push: true
-          tags: evencatt/infra_actions:latest
+          tags: prakticum33/infra_actions:latest
 
   deploy:
     runs-on: ubuntu-latest
