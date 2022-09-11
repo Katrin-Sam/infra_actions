@@ -1,3 +1,30 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@Katrin-Sam 
+evencatt
+/
+infra_actions
+Public
+forked from Turonk/infra_actions
+Code
+Pull requests
+Actions
+Projects
+Security
+Insights
+infra_actions/.github/workflows/main.yml
+@evencatt
+evencatt fixed syntax
+Latest commit 089d1df on 7 Aug
+ History
+ 1 contributor
+81 lines (73 sloc)  2.63 KB
+
 name: Django-app workflow
 
 on: [push]
@@ -25,8 +52,7 @@ jobs:
         # перейти в папку, содержащую manage.py — 
         cd infra_project/
         python manage.py test
-        
-build_and_push_to_docker_hub:
+  build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     needs: tests
@@ -41,15 +67,16 @@ build_and_push_to_docker_hub:
         # Запуск скрипта авторизации на Docker Hub
         uses: docker/login-action@v1 
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKER_USERNAME }} 
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push to Docker Hub
-        # Пуш образа в Docker Hub 
+            # Пуш образа в Docker Hub 
         uses: docker/build-push-action@v2 
         with:
           push: true
-          tags: ваш-логин-на-docker-hub/ваш-репозиторий-на-docker-hub:latest
-deploy:
+          tags: evencatt/infra_actions:latest
+
+  deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
     steps:
@@ -62,7 +89,17 @@ deploy:
         passphrase: ${{ secrets.PASSPHRASE }} # Если ваш ssh-ключ защищён фразой-паролем
         script: |
           # Выполняет pull образа с DockerHub
-          sudo docker pull <имя-пользователя>/<имя-репозитория>
+          sudo docker pull evencatt/infra_actions
           #остановка всех контейнеров
           sudo docker stop $(sudo docker ps -a -q)
-          sudo docker run --rm -d -p 5000:5000 <имя-пользователя>/<имя-репозитория>           
+          sudo docker run --rm -d -p 5000:5000 evencatt/infra_actions
+  send_message:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - name: send message
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: ${{ github.workflow }} успешно выполнен!
